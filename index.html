@@ -156,7 +156,9 @@
       .print-area{display:block!important;color:#111;font-family:"Noto Sans TC",sans-serif;padding:30px}
       .print-area h1{font-size:24px}.print-area table{width:100%;border-collapse:collapse;margin-top:20px}
       .print-area th,.print-area td{border:1px solid #777;padding:9px;text-align:left;font-size:12px}
-      .print-area .cover{height:600px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+      .print-area .cover{height:600px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;page-break-after:always}
+      .print-page{page-break-after:always;padding:20px;text-align:center}
+      .print-page img{max-width:100%;max-height:850px;object-fit:contain;border:1px solid #ddd;margin-top:15px}
     }
     @media(max-width:800px){
       .wrap{width:min(100% - 28px,1160px)}
@@ -188,7 +190,6 @@
     </div>
   </header>
 
-  <!-- 學生基本資料填寫彈跳視窗（免登入） -->
   <div class="modal" id="infoModal">
     <div class="modal-box">
       <h2>填寫考生基本資料</h2>
@@ -209,15 +210,15 @@
     <div class="wrap hero-content">
       <span class="eyebrow">免註冊、免登入・即開即用</span>
       <h1>朝陽科技大學財務金融系<br>甄選備審文件資料生成系統</h1>
-      <p>一站式上傳、整理、生成備審資料，輕鬆匯出符合財務金融系甄選需求的完整檔案。</p>
+      <p>一站式上傳、整理、生成備審資料，支援每項至多2件、總計至多20件，一鍵整合匯出完整 PDF。</p>
       <div class="hero-buttons">
         <a class="btn btn-primary" href="#documents">▣ 立即開始整理</a>
         <a class="btn btn-outline" href="#instructions">⊙ 了解系統功能</a>
       </div>
       <div class="proof">
-        <span>免帳號直接上傳</span>
-        <span>自動代入考生資訊</span>
-        <span>一鍵整合列印 PDF</span>
+        <span>每項至多 2 件檔案</span>
+        <span>全部總計至多 20 件</span>
+        <span>圖檔一鍵合併列印 PDF</span>
       </div>
     </div>
   </section>
@@ -225,9 +226,9 @@
   <div class="wrap" id="features">
     <section class="feature-strip">
       <div class="feature"><span class="feature-icon">▢</span><div><strong>完整對應甄選項目</strong><small>A～D-3 共 10 項資料分類</small></div></div>
-      <div class="feature"><span class="feature-icon">♢</span><div><strong>即時瀏覽檢視</strong><small>隨時檢視已上傳的檔案清單</small></div></div>
+      <div class="feature"><span class="feature-icon">♢</span><div><strong>數量智能管制</strong><small>每項最多2件，總上限20件</small></div></div>
       <div class="feature"><span class="feature-icon">♧</span><div><strong>提升表達競爭力</strong><small>依項目整理成果與亮點</small></div></div>
-      <div class="feature"><span class="feature-icon">⇩</span><div><strong>一鍵整合列印</strong><small>產生包含個人資訊的 PDF 封面</small></div></div>
+      <div class="feature"><span class="feature-icon">⇩</span><div><strong>圖檔合併 PDF</strong><small>自動嵌入圖片生成完整列印檔</small></div></div>
     </section>
   </div>
 
@@ -235,7 +236,7 @@
     <div class="section-heading" id="documents">
       <div>
         <h2>備審資料項目</h2>
-        <p>依甄選需求整理上傳。檔案會暫存於您的瀏覽器中，安全又快速。</p>
+        <p>依甄選需求整理上傳。每項至多 2 件，全部總計至多 20 件。</p>
       </div>
       <a class="help-link" href="#instructions">▣ 查看操作說明</a>
     </div>
@@ -283,7 +284,7 @@
       <aside>
         <div class="pdf-sheet"></div>
         <h3>生成完整 PDF</h3>
-        <p>整合考生個人資訊、已上傳項目的檔案清單，建立備審文件列印封面。</p>
+        <p>整合考生個人資訊、封面、清單以及所有圖檔內容一併合併匯出。</p>
         <div class="progress"><i id="progressBar"></i></div>
         <div class="progress-label" id="progressLabel">目前尚未上傳資料</div>
         <button class="btn btn-gold btn-full" id="printPDF">產生 PDF 列印檔</button>
@@ -355,7 +356,22 @@
           infoModal.classList.remove("hidden");
           return;
         }
-        selectedCategory = btn.dataset.category;
+        const category = btn.dataset.category;
+        
+        // 檢查全部總上傳件數上限 (20件)
+        if(records.length >= 20){
+          showToast("全部上傳件數已達上限 20 件，無法再新增。");
+          return;
+        }
+
+        // 檢查單一項目上傳件數上限 (2件)
+        const categoryCount = records.filter(r => r.category === category).length;
+        if(categoryCount >= 2){
+          showToast("「" + category + "」已達每項至多 2 件的上限。");
+          return;
+        }
+
+        selectedCategory = category;
         fileInput.click();
       });
     });
@@ -365,13 +381,13 @@
       if(!file) return;
       const category = selectedCategory || "未分類資料";
       
-      // 模擬讀取檔案並建立在地端暫存
       const reader = new FileReader();
       reader.onload = function(e){
         const newRecord = {
           id: "_" + Math.random().toString(36).substr(2, 9),
           category: category,
           fileName: file.name,
+          fileType: file.type,
           fileUrl: e.target.result,
           createdAt: new Date().toLocaleDateString("zh-TW")
         };
@@ -391,9 +407,9 @@
 
     function renderFiles(){
       const count = records.length;
-      const total = 10;
+      const total = 20;
       document.getElementById("progressBar").style.width = Math.min(100, count/total*100) + "%";
-      document.getElementById("progressLabel").textContent = count ? "已整理 " + count + " 份電子檔" : "目前尚未上傳資料";
+      document.getElementById("progressLabel").textContent = "已整理 " + count + " / 20 份電子檔";
       
       if(!count){
         fileList.className = "empty";
@@ -433,7 +449,9 @@
         showToast("請先上傳至少一份備審資料，再建立整合列印檔。");
         return;
       }
-      document.getElementById("printArea").innerHTML = `
+      
+      // 產生包含封面、目錄清單、以及所有圖片合併頁面的列印內容
+      let htmlContent = `
         <div class="cover">
           <div style="color:#1769d7;font-size:18px;font-weight:700;letter-spacing:.15em">朝陽科技大學 財務金融系</div>
           <h1 style="margin:20px 0">甄選備審文件<br>資料整合清單</h1>
@@ -443,17 +461,36 @@
             <p style="margin:4px 0"><b>科系班級：</b> ${escapeHTML(studentInfo.dept)}</p>
             <p style="margin:4px 0"><b>產生日期：</b> ${new Date().toLocaleDateString("zh-TW")}</p>
           </div>
-          <p style="font-size:12px;color:#555">本列印檔為電子資料分類索引與封面；請搭配下列原始檔案提交。</p>
+          <p style="font-size:12px;color:#555">本列印檔為電子資料分類索引與封面；後續附有所有已上傳檔案之合併預覽。</p>
         </div>
-        <div style="page-break-before:always"></div>
-        <h2>已整理文件一覽表</h2>
-        <table>
-          <thead><tr><th>序號</th><th>備審項目</th><th>電子檔名稱</th><th>上傳日期</th></tr></thead>
-          <tbody>
-            ${records.map((r,i)=>`<tr><td>${i+1}</td><td>${escapeHTML(r.category)}</td><td>${escapeHTML(r.fileName)}</td><td>${r.createdAt}</td></tr>`).join("")}
-          </tbody>
-        </table>
+        
+        <div class="print-page">
+          <h2>已整理文件總目錄清單</h2>
+          <table>
+            <thead><tr><th>序號</th><th>備審項目</th><th>電子檔名稱</th><th>上傳日期</th></tr></thead>
+            <tbody>
+              ${records.map((r,i)=>`<tr><td>${i+1}</td><td>${escapeHTML(r.category)}</td><td>${escapeHTML(r.fileName)}</td><td>${r.createdAt}</td></tr>`).join("")}
+            </tbody>
+          </table>
+        </div>
       `;
+
+      // 將每個上傳的檔案逐一加入合併頁面（特別針對圖片進行預覽嵌入）
+      records.forEach((r, i) => {
+        htmlContent += `
+          <div class="print-page">
+            <div style="font-size:13px;color:#666;margin-bottom:10px">【項目：${escapeHTML(r.category)}】 (第 ${i+1} 件 / 共 ${records.length} 件)</div>
+            <h3 style="margin:0 0 10px">${escapeHTML(r.fileName)}</h3>
+        `;
+        if(r.fileType && r.fileType.startsWith("image/")){
+          htmlContent += `<img src="${r.fileUrl}" alt="${escapeHTML(r.fileName)}">`;
+        } else {
+          htmlContent += `<p style="padding:40px;border:1px dashed #aaa;color:#555;margin-top:20px">（此檔案為 PDF 或非圖片格式，請以原始檔案或點選下載檢視為主：${escapeHTML(r.fileName)}）</p>`;
+        }
+        htmlContent += `</div>`;
+      });
+
+      document.getElementById("printArea").innerHTML = htmlContent;
       window.print();
     });
 
