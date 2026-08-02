@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>朝陽科技大學財務金融系｜甄選備審文件資料生成系統</title>
+  <meta name="description" content="朝陽科技大學財務金融系甄選備審文件資料生成系統，免登入、免註冊，快速填寫個人基本資料並整合上傳備審文件。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Noto+Sans+TC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#f7f9fd;
+      --paper:#ffffff;
+      --ink:#17284b;
+      --muted:#65718a;
+      --line:#dfe6f1;
+      --blue:#1769d7;
+      --blue-dark:#0d4ca5;
+      --blue-soft:#eaf3ff;
+      --green:#3f9873;
+      --green-soft:#edf9f1;
+      --violet:#7559be;
+      --violet-soft:#f3effd;
+      --gold:#b98113;
+      --gold-soft:#fff7e4;
+      --shadow:0 18px 40px rgba(28,62,116,.10);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;background:var(--bg);color:var(--ink);
+      font-family:"Noto Sans TC",sans-serif;font-size:15px;line-height:1.6;
+    }
+    button,input,textarea{font:inherit}
+    button{cursor:pointer}
+    .wrap{width:min(1160px,calc(100% - 48px));margin:auto}
+    header{
+      height:72px;background:rgba(255,255,255,.96);border-bottom:1px solid #edf0f6;
+      display:flex;align-items:center;position:sticky;top:0;z-index:20;
+      backdrop-filter:blur(12px);
+    }
+    .nav{display:flex;align-items:center;justify-content:space-between;gap:24px;width:100%}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);min-width:250px}
+    .brand-mark{width:35px;height:35px;position:relative;background:var(--blue);clip-path:polygon(50% 0,100% 20%,100% 78%,50% 100%,0 78%,0 20%)}
+    .brand-mark:after{content:"";position:absolute;inset:7px 9px;background:#fff;clip-path:polygon(0 0,43% 14%,43% 82%,0 100%,0 0,57% 14%,100% 0,100% 100%,57% 82%)}
+    .brand strong{display:block;font-size:15px;letter-spacing:.03em;line-height:1.2}
+    .brand small{color:var(--muted);font-size:10px}
+    nav{display:flex;align-items:center;justify-content:center;gap:32px;flex:1}
+    nav a{color:#34415b;text-decoration:none;font-size:13px;font-weight:600;padding:24px 0;white-space:nowrap}
+    nav a:first-child{color:var(--blue);border-bottom:2px solid var(--blue)}
+    .student-badge{background:var(--blue-soft);color:var(--blue);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px}
+    .btn{
+      border:1px solid transparent;border-radius:6px;padding:10px 20px;min-height:42px;
+      font-weight:600;font-size:13px;transition:.2s ease;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn-primary{background:var(--blue);color:#fff;box-shadow:0 7px 16px rgba(23,105,215,.2)}
+    .btn-primary:hover{background:var(--blue-dark)}
+    .btn-outline{background:#fff;color:var(--ink);border-color:var(--line)}
+    .btn-outline:hover{border-color:var(--blue);color:var(--blue)}
+    .btn-gold{background:#a8730a;color:#fff}
+    .btn-gold:hover{background:#855b05}
+    .hero{
+      min-height:330px;position:relative;overflow:hidden;
+      background:linear-gradient(100deg,#edf5ff 0%,#f7fbff 49%,#d9e8f7 100%);
+    }
+    .hero:before{
+      content:"";position:absolute;right:0;top:0;width:50%;height:100%;
+      background:
+        linear-gradient(90deg,rgba(247,251,255,.96),rgba(220,234,246,.12)),
+        radial-gradient(circle at 65% 28%,#fff 0 7%,transparent 7.2%),
+        linear-gradient(135deg,transparent 0 22%,rgba(116,148,177,.18) 22.2% 23%,transparent 23.2%),
+        linear-gradient(40deg,#ccd9e4 0%,#edf3f6 45%,#b6c7d3 100%);
+      opacity:.95;
+    }
+    .hero:after{
+      content:"";position:absolute;right:20%;bottom:-42px;width:235px;height:255px;border-radius:120px 120px 20px 20px;
+      background:linear-gradient(135deg,#3e474f,#121b26 52%,#627383);opacity:.8;
+      box-shadow:70px 30px 0 -25px rgba(255,255,255,.6);
+    }
+    .hero-content{position:relative;z-index:1;padding:44px 0 34px;width:58%}
+    .eyebrow{display:inline-block;padding:5px 13px;background:#dceaff;color:var(--blue);font-size:12px;border-radius:999px;font-weight:700}
+    h1{font-size:clamp(28px,3.8vw,42px);line-height:1.18;margin:14px 0 12px;letter-spacing:.03em;font-weight:900}
+    .hero p{max-width:430px;margin:0;color:#4e5d76;font-size:14px}
+    .hero-buttons{display:flex;gap:12px;margin-top:18px}
+    .proof{display:flex;gap:20px;flex-wrap:wrap;margin-top:20px;color:#54637c;font-size:12px}
+    .proof span:before{content:"✓";color:var(--blue);font-weight:900;margin-right:7px}
+    .feature-strip{margin-top:14px;display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border:1px solid #e8eef7;border-radius:9px;box-shadow:0 7px 22px rgba(22,60,116,.05)}
+    .feature{padding:15px 18px;display:flex;align-items:center;gap:11px;border-right:1px solid #e7edf6}
+    .feature:last-child{border:0}
+    .feature-icon{font-size:23px;color:var(--blue)}
+    .feature strong{display:block;font-size:13px}
+    .feature small{display:block;color:var(--muted);font-size:10px}
+    main{padding:22px 0 64px}
+    .section-heading{display:flex;justify-content:space-between;align-items:flex-end;margin:22px 0 12px;gap:16px}
+    .section-heading h2{font-size:19px;margin:0;font-weight:800}
+    .section-heading p{margin:2px 0 0;color:var(--muted);font-size:12px}
+    .help-link{font-size:12px;color:var(--ink);text-decoration:none;border:1px solid var(--line);padding:7px 11px;border-radius:5px;white-space:nowrap}
+    .workspace{display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:18px;align-items:start}
+    .cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .doc-card{background:var(--paper);border:1px solid #e4eaf2;border-radius:8px;padding:17px;min-height:146px;position:relative;overflow:hidden}
+    .doc-card.wide{grid-column:span 2;min-height:auto}
+    .doc-card.a{border-top:3px solid var(--blue)}
+    .doc-card.b{border-top:3px solid #368fe0}
+    .doc-card.c{border-top:3px solid var(--green);background:linear-gradient(110deg,#fff,#f4fbf7)}
+    .doc-card.d{border-top:3px solid var(--violet);background:linear-gradient(110deg,#fff,#faf8ff)}
+    .card-title{display:flex;align-items:center;gap:8px}
+    .code{width:23px;height:23px;border-radius:50%;display:grid;place-items:center;color:#fff;background:var(--blue);font-size:11px;font-weight:800;flex:none}
+    .b .code{background:#368fe0}.c .code{background:var(--green)}.d .code{background:var(--violet)}
+    .card-title strong{font-size:15px}
+    .doc-card p{font-size:11px;color:#5d6b81;margin:7px 0 12px}
+    .upload-btn{background:#fff;border:1px solid #dce5f0;color:#3567a7;border-radius:4px;padding:7px 12px;font-size:12px;font-weight:600;min-height:34px}
+    .upload-btn:hover{background:var(--blue-soft);border-color:#a9c8f0}
+    .subitems{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+    .subitem{background:#fff;border:1px solid #dfeee5;border-radius:6px;padding:9px 8px}
+    .subitem b{font-size:10px;color:var(--green);background:var(--green-soft);padding:2px 5px;border-radius:3px}
+    .subitem span{display:block;font-size:11px;font-weight:700;margin:6px 0}
+    .subitem .upload-btn{padding:5px 6px;width:100%;font-size:10px}
+    .d-items{display:grid;grid-template-columns:1fr 1.35fr 1fr;gap:0;margin-top:12px}
+    .d-item{padding:0 14px;border-right:1px solid #e6e1f3}
+    .d-item:first-child{padding-left:0}.d-item:last-child{border:0}
+    .d-item b{font-size:10px;color:var(--violet);background:var(--violet-soft);padding:2px 6px;border-radius:3px}
+    .d-item strong{display:block;font-size:13px;margin-top:6px}
+    .d-item p{margin:3px 0 8px}
+    aside{background:linear-gradient(180deg,#fffdf8,#fff);border:1px solid #f0e7cd;border-radius:8px;min-height:310px;padding:22px;text-align:center}
+    .pdf-sheet{margin:3px auto 10px;width:53px;height:68px;background:#fff;border:1px solid #f1e8d4;border-radius:4px;box-shadow:0 6px 13px rgba(130,94,24,.1);position:relative;padding-top:16px}
+    .pdf-sheet:before{content:"PDF";color:#fff;background:#e36155;font-size:8px;padding:2px 5px;border-radius:2px}
+    .pdf-sheet:after{content:"";position:absolute;bottom:12px;left:10px;width:31px;height:2px;background:#e9d9b8;box-shadow:0 6px #e9d9b8,0 12px #e9d9b8}
+    aside h3{font-size:16px;margin:0 0 5px}
+    aside p{font-size:11px;color:#68738a;line-height:1.7;margin:0 0 15px}
+    .progress{height:6px;background:#f2ead8;border-radius:99px;margin:14px 0 7px;overflow:hidden}
+    .progress i{display:block;width:0;height:100%;background:linear-gradient(90deg,#d5a21e,#b9790d);transition:width .4s ease}
+    .progress-label{font-size:11px;color:#8a7350;margin-bottom:14px}
+    .btn-full{width:100%;padding:11px 8px}
+    .notice{margin-top:15px;font-size:10px;color:#8a7c65;line-height:1.55}
+    .upload-list{margin-top:20px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:16px}
+    .upload-list h3{font-size:14px;margin:0 0 10px}
+    .empty{font-size:12px;color:var(--muted);padding:10px 0}
+    .file-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid #edf0f5;font-size:12px}
+    .file-row:first-of-type{border-top:0}
+    .file-info{min-width:0}.file-info strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.file-info small{color:var(--muted)}
+    .remove{border:0;background:transparent;color:#b34a55;font-size:12px;padding:7px}
+    .modal{position:fixed;inset:0;background:rgba(15,29,54,.52);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px}
+    .modal.hidden{display:none}
+    .modal-box{width:min(450px,100%);background:#fff;border-radius:12px;padding:28px;box-shadow:var(--shadow);position:relative}
+    .modal h2{margin:0 0 6px;font-size:22px}.modal p{font-size:13px;color:var(--muted);margin:0 0 18px}
+    label{font-size:12px;font-weight:700;display:block;margin:12px 0 5px}
+    input{width:100%;border:1px solid #dbe3ef;border-radius:6px;padding:11px 12px;outline:none;background:#fff}
+    input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(23,105,215,.12)}
+    .toast{position:fixed;bottom:24px;right:24px;background:#17355f;color:#fff;padding:13px 17px;border-radius:7px;font-size:13px;box-shadow:var(--shadow);transform:translateY(100px);opacity:0;transition:.3s;z-index:200}
+    .toast.show{transform:none;opacity:1}
+    .print-area{display:none}
+    @media print{
+      body>*:not(.print-area){display:none!important}
+      .print-area{display:block!important;color:#111;font-family:"Noto Sans TC",sans-serif;padding:30px}
+      .print-area h1{font-size:24px}.print-area table{width:100%;border-collapse:collapse;margin-top:20px}
+      .print-area th,.print-area td{border:1px solid #777;padding:9px;text-align:left;font-size:12px}
+      .print-area .cover{height:600px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+    }
+    @media(max-width:800px){
+      .wrap{width:min(100% - 28px,1160px)}
+      header{height:64px}.brand{min-width:0}.brand small{display:none}.brand strong{font-size:13px}
+      nav{display:none}.nav-actions .btn-outline{display:none}
+      .hero{min-height:auto}.hero:before{width:48%;opacity:.48}.hero:after{right:-28px;opacity:.25}
+      .hero-content{width:100%;padding:34px 0 28px}.feature-strip{grid-template-columns:1fr 1fr}.feature{padding:12px;border-bottom:1px solid #e7edf6}
+      .workspace{grid-template-columns:1fr}.subitems{grid-template-columns:1fr 1fr}.d-items{grid-template-columns:1fr;gap:14px}.d-item,.d-item:first-child{padding:0;border:0}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap nav">
+      <a href="#home" class="brand" aria-label="回到首頁">
+        <span class="brand-mark"></span>
+        <span><strong>甄選備審資料生成系統</strong><small>朝陽科技大學財務金融系</small></span>
+      </a>
+      <nav>
+        <a href="#home">首頁</a>
+        <a href="#features">系統功能</a>
+        <a href="#documents">資料項目</a>
+        <a href="#instructions">操作說明</a>
+      </nav>
+      <div class="nav-actions">
+        <div class="student-badge" id="navStudentInfo">👤 <span id="displayStudentName">尚未填寫</span></div>
+        <button class="btn btn-outline" id="editInfoBtn" style="padding:6px 12px;min-height:36px;font-size:12px">修改基本資料</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 學生基本資料填寫彈跳視窗（免登入） -->
+  <div class="modal" id="infoModal">
+    <div class="modal-box">
+      <h2>填寫考生基本資料</h2>
+      <p>請輸入您的真實姓名與畢業學校，以便自動產生於備審資料封面及整合列印檔。</p>
+      <form id="infoForm">
+        <label for="studentName">學生姓名 *</label>
+        <input id="studentName" type="text" required placeholder="例如：王小明">
+        <label for="schoolName">畢業高中職學校 *</label>
+        <input id="schoolName" type="text" required placeholder="例如：臺中市立○○高級中等學校">
+        <label for="departmentName">科系 / 班級 *</label>
+        <input id="departmentName" type="text" required placeholder="例如：商業經營科 / 普通科">
+        <button class="btn btn-primary btn-full" style="margin-top:22px" type="submit">確認並開始使用系統</button>
+      </form>
+    </div>
+  </div>
+
+  <section class="hero" id="home">
+    <div class="wrap hero-content">
+      <span class="eyebrow">免註冊、免登入・即開即用</span>
+      <h1>朝陽科技大學財務金融系<br>甄選備審文件資料生成系統</h1>
+      <p>一站式上傳、整理、生成備審資料，輕鬆匯出符合財務金融系甄選需求的完整檔案。</p>
+      <div class="hero-buttons">
+        <a class="btn btn-primary" href="#documents">▣ 立即開始整理</a>
+        <a class="btn btn-outline" href="#instructions">⊙ 了解系統功能</a>
+      </div>
+      <div class="proof">
+        <span>免帳號直接上傳</span>
+        <span>自動代入考生資訊</span>
+        <span>一鍵整合列印 PDF</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap" id="features">
+    <section class="feature-strip">
+      <div class="feature"><span class="feature-icon">▢</span><div><strong>完整對應甄選項目</strong><small>A～D-3 共 10 項資料分類</small></div></div>
+      <div class="feature"><span class="feature-icon">♢</span><div><strong>即時瀏覽檢視</strong><small>隨時檢視已上傳的檔案清單</small></div></div>
+      <div class="feature"><span class="feature-icon">♧</span><div><strong>提升表達競爭力</strong><small>依項目整理成果與亮點</small></div></div>
+      <div class="feature"><span class="feature-icon">⇩</span><div><strong>一鍵整合列印</strong><small>產生包含個人資訊的 PDF 封面</small></div></div>
+    </section>
+  </div>
+
+  <main class="wrap">
+    <div class="section-heading" id="documents">
+      <div>
+        <h2>備審資料項目</h2>
+        <p>依甄選需求整理上傳。檔案會暫存於您的瀏覽器中，安全又快速。</p>
+      </div>
+      <a class="help-link" href="#instructions">▣ 查看操作說明</a>
+    </div>
+    <div class="workspace">
+      <div class="cards">
+        <article class="doc-card a">
+          <div class="card-title"><span class="code">A</span><strong>修課紀錄</strong></div>
+          <p>上傳高中（職）在校成績單或修課紀錄相關資料。</p>
+          <button class="upload-btn" data-category="A. 修課紀錄">⇧ 新增／上傳</button>
+        </article>
+        <article class="doc-card b">
+          <div class="card-title"><span class="code">B</span><strong>課程學習成果</strong></div>
+          <p>上傳課程成果、報告、專題或學習歷程成果資料。</p>
+          <button class="upload-btn" data-category="B. 課程學習成果">⇧ 新增／上傳</button>
+        </article>
+        <article class="doc-card c wide">
+          <div class="card-title"><span class="code">C</span><strong>多元表現</strong></div>
+          <div class="subitems">
+            <div class="subitem"><b>C-2</b><span>社團活動經驗</span><button class="upload-btn" data-category="C-2 社團活動經驗">⇧ 新增／上傳</button></div>
+            <div class="subitem"><b>C-3</b><span>擔任幹部經驗</span><button class="upload-btn" data-category="C-3 擔任幹部經驗">⇧ 新增／上傳</button></div>
+            <div class="subitem"><b>C-7</b><span>檢定證照</span><button class="upload-btn" data-category="C-7 檢定證照">⇧ 新增／上傳</button></div>
+            <div class="subitem"><b>C-8</b><span>特殊優良表現證明</span><button class="upload-btn" data-category="C-8 特殊優良表現證明">⇧ 新增／上傳</button></div>
+          </div>
+        </article>
+        <article class="doc-card d wide">
+          <div class="d-items">
+            <div class="d-item">
+              <b>D-1</b><strong>多元表現綜整心得</strong>
+              <p>上傳綜整心得與反思。</p>
+              <button class="upload-btn" data-category="D-1 多元表現綜整心得">⇧ 新增／上傳</button>
+            </div>
+            <div class="d-item">
+              <b>D-2</b><strong>學習歷程自述</strong>
+              <p>包含學習歷程反思、就讀動機、未來學習計畫與生涯規劃。</p>
+              <button class="upload-btn" data-category="D-2 學習歷程自述">⇧ 新增／上傳</button>
+            </div>
+            <div class="d-item">
+              <b>D-3</b><strong>其他有利審查資料</strong>
+              <p>上傳其他有助於審查之補充資料。</p>
+              <button class="upload-btn" data-category="D-3 其他有利審查資料">⇧ 新增／上傳</button>
+            </div>
+          </div>
+        </article>
+      </div>
+      <aside>
+        <div class="pdf-sheet"></div>
+        <h3>生成完整 PDF</h3>
+        <p>整合考生個人資訊、已上傳項目的檔案清單，建立備審文件列印封面。</p>
+        <div class="progress"><i id="progressBar"></i></div>
+        <div class="progress-label" id="progressLabel">目前尚未上傳資料</div>
+        <button class="btn btn-gold btn-full" id="printPDF">產生 PDF 列印檔</button>
+        <div class="notice">將開啟瀏覽器列印預覽，請選擇「另存為 PDF」下載。</div>
+      </aside>
+    </div>
+    <section class="upload-list" id="instructions">
+      <h3>我的已上傳資料清單</h3>
+      <div id="fileList" class="empty">尚無資料。請點選各項目的「新增／上傳」開始整理。</div>
+    </section>
+  </main>
+
+  <input type="file" id="fileInput" hidden accept=".pdf,image/png,image/jpeg,image/webp,image/gif">
+  <div class="toast" id="toast"></div>
+  <div class="print-area" id="printArea"></div>
+
+  <script>
+    let studentInfo = JSON.parse(localStorage.getItem("cyut_student_info") || "null");
+    let records = JSON.parse(localStorage.getItem("cyut_student_records") || "[]");
+    let selectedCategory = "";
+
+    const infoModal = document.getElementById("infoModal");
+    const fileInput = document.getElementById("fileInput");
+    const fileList = document.getElementById("fileList");
+
+    function initCheck(){
+      if(!studentInfo || !studentInfo.name){
+        infoModal.classList.remove("hidden");
+      } else {
+        document.getElementById("displayStudentName").textContent = studentInfo.name;
+        infoModal.classList.add("hidden");
+      }
+      renderFiles();
+    }
+
+    document.getElementById("infoForm").addEventListener("submit", e=>{
+      e.preventDefault();
+      const name = document.getElementById("studentName").value.trim();
+      const school = document.getElementById("schoolName").value.trim();
+      const dept = document.getElementById("departmentName").value.trim();
+      if(!name || !school || !dept) return;
+
+      studentInfo = { name, school, dept };
+      localStorage.setItem("cyut_student_info", JSON.stringify(studentInfo));
+      document.getElementById("displayStudentName").textContent = name;
+      infoModal.classList.add("hidden");
+      showToast("基本資料已儲存！");
+    });
+
+    document.getElementById("editInfoBtn").onclick = ()=>{
+      if(studentInfo){
+        document.getElementById("studentName").value = studentInfo.name || "";
+        document.getElementById("schoolName").value = studentInfo.school || "";
+        document.getElementById("departmentName").value = studentInfo.dept || "";
+      }
+      infoModal.classList.remove("hidden");
+    };
+
+    function showToast(message){
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(()=>toast.classList.remove("show"), 3200);
+    }
+
+    document.querySelectorAll(".upload-btn").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        if(!studentInfo || !studentInfo.name){
+          infoModal.classList.remove("hidden");
+          return;
+        }
+        selectedCategory = btn.dataset.category;
+        fileInput.click();
+      });
+    });
+
+    fileInput.addEventListener("change",()=>{
+      const file = fileInput.files[0];
+      if(!file) return;
+      const category = selectedCategory || "未分類資料";
+      
+      // 模擬讀取檔案並建立在地端暫存
+      const reader = new FileReader();
+      reader.onload = function(e){
+        const newRecord = {
+          id: "_" + Math.random().toString(36).substr(2, 9),
+          category: category,
+          fileName: file.name,
+          fileUrl: e.target.result,
+          createdAt: new Date().toLocaleDateString("zh-TW")
+        };
+        records.unshift(newRecord);
+        localStorage.setItem("cyut_student_records", JSON.stringify(records));
+        renderFiles();
+        showToast("已成功上傳並歸入「" + category + "」。");
+        fileInput.value = "";
+        selectedCategory = "";
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function escapeHTML(text){
+      return String(text||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+    }
+
+    function renderFiles(){
+      const count = records.length;
+      const total = 10;
+      document.getElementById("progressBar").style.width = Math.min(100, count/total*100) + "%";
+      document.getElementById("progressLabel").textContent = count ? "已整理 " + count + " 份電子檔" : "目前尚未上傳資料";
+      
+      if(!count){
+        fileList.className = "empty";
+        fileList.textContent = "尚無資料。請點選各項目的〈新增／上傳〉開始整理。";
+        return;
+      }
+      fileList.className = "";
+      fileList.innerHTML = records.map(r=>`
+        <div class="file-row">
+          <div class="file-info">
+            <strong>▧ ${escapeHTML(r.fileName)}</strong>
+            <small>${escapeHTML(r.category)} ｜ ${r.createdAt}</small>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <a class="upload-btn" style="text-decoration:none;padding:5px 9px" href="${r.fileUrl}" target="_blank" download="${escapeHTML(r.fileName)}">下載檢視</a>
+            <button class="remove" data-id="${r.id}">移除</button>
+          </div>
+        </div>`).join("");
+
+      document.querySelectorAll(".remove").forEach(btn=>{
+        btn.onclick = ()=>{
+          if(!confirm("確定要移除此筆資料嗎？")) return;
+          records = records.filter(r => r.id !== btn.dataset.id);
+          localStorage.setItem("cyut_student_records", JSON.stringify(records));
+          renderFiles();
+          showToast("資料已移除。");
+        };
+      });
+    }
+
+    document.getElementById("printPDF").addEventListener("click",()=>{
+      if(!studentInfo || !studentInfo.name){
+        infoModal.classList.remove("hidden");
+        return;
+      }
+      if(!records.length){
+        showToast("請先上傳至少一份備審資料，再建立整合列印檔。");
+        return;
+      }
+      document.getElementById("printArea").innerHTML = `
+        <div class="cover">
+          <div style="color:#1769d7;font-size:18px;font-weight:700;letter-spacing:.15em">朝陽科技大學 財務金融系</div>
+          <h1 style="margin:20px 0">甄選備審文件<br>資料整合清單</h1>
+          <div style="margin:30px 0;line-height:2;font-size:15px;border:1px solid #ccc;padding:20px 40px;border-radius:6px;text-align:left;display:inline-block">
+            <p style="margin:4px 0"><b>考生姓名：</b> ${escapeHTML(studentInfo.name)}</p>
+            <p style="margin:4px 0"><b>畢業學校：</b> ${escapeHTML(studentInfo.school)}</p>
+            <p style="margin:4px 0"><b>科系班級：</b> ${escapeHTML(studentInfo.dept)}</p>
+            <p style="margin:4px 0"><b>產生日期：</b> ${new Date().toLocaleDateString("zh-TW")}</p>
+          </div>
+          <p style="font-size:12px;color:#555">本列印檔為電子資料分類索引與封面；請搭配下列原始檔案提交。</p>
+        </div>
+        <div style="page-break-before:always"></div>
+        <h2>已整理文件一覽表</h2>
+        <table>
+          <thead><tr><th>序號</th><th>備審項目</th><th>電子檔名稱</th><th>上傳日期</th></tr></thead>
+          <tbody>
+            ${records.map((r,i)=>`<tr><td>${i+1}</td><td>${escapeHTML(r.category)}</td><td>${escapeHTML(r.fileName)}</td><td>${r.createdAt}</td></tr>`).join("")}
+          </tbody>
+        </table>
+      `;
+      window.print();
+    });
+
+    initCheck();
+  </script>
+</body>
+</html>
